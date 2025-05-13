@@ -1,73 +1,102 @@
-# Welcome to your Lovable project
+# MagicTools
 
-## Project info
+MagicTools is a modern web application designed to help users manage and visualize their tools and data effectively. It leverages AI-powered features for generating tool descriptions and creating insightful visualizations.
 
-**URL**: https://lovable.dev/projects/710c85a6-7886-45b2-ae5a-9ec1aeec7df7
+## Features
 
-## How can I edit this code?
+- **AI-Powered Tool Descriptions**: Automatically generate detailed tool schemas using GROQ and Gemini APIs.
+- **Data Visualizations**: Visualize your data with interactive charts and graphs.
+- **User-Friendly Interface**: Intuitive design for seamless user experience.
+- **State Management**: Optimized state handling for better performance.
 
-There are several ways of editing your application.
+## Prerequisites
 
-**Use Lovable**
+Before setting up the project, ensure you have the following installed:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/710c85a6-7886-45b2-ae5a-9ec1aeec7df7) and start prompting.
+- [Node.js](https://nodejs.org/) (v16 or later)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Git](https://git-scm.com/)
 
-Changes made via Lovable will be committed automatically to this repo.
+## Setup Instructions
 
-**Use your preferred IDE**
+1. **Clone the Repository**:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+   ```bash
+   git clone <repository-url>
+   cd MagicTools
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. **Install Dependencies**:
 
-Follow these steps:
+   ```bash
+   npm install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+   or
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+   ```bash
+   yarn install
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. **Set Up Environment Variables**:
+   Create a `.env` file in the root directory and add the following variables:
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+   ```env
+   VITE_GROQ_API_KEY=<your-groq-api-key>
+   VITE_GEMINI_API_KEY=<your-gemini-api-key>
+   VITE_GROQ_DEFAULT_MODEL=<default-model>
+   VITE_GROQ_MODELS=<available-models>
+   ```
+
+4. **Start the Development Server**:
+
+   ```bash
+   npm run dev
+   ```
+
+   or
+
+   ```bash
+   yarn dev
+   ```
+
+   The application will be available at `http://localhost:3000`.
+
+5. **Build for Production**:
+   To create a production build, run:
+
+   ```bash
+   npm run build
+   ```
+
+   or
+
+   ```bash
+   yarn build
+   ```
+
+## Folder Structure
+
+```
+MagicTools/
+├── public/              # Static assets
+├── src/                 # Source code
+│   ├── components/      # Reusable UI components
+│   ├── hooks/           # Custom React hooks
+│   ├── lib/             # Utility functions and configurations
+│   ├── pages/           # Application pages
+│   ├── providers/       # Context providers
+│   └── services/        # API and service integrations
+├── .env                 # Environment variables
+├── package.json         # Project metadata and scripts
+└── README.md            # Project documentation
 ```
 
-**Edit a file directly in GitHub**
+## Contributing
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Contributions are welcome! Please follow these steps:
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/710c85a6-7886-45b2-ae5a-9ec1aeec7df7) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Commit your changes with clear messages.
+4. Push your branch and create a pull request.
