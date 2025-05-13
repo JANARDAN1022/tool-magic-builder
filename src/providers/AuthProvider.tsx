@@ -21,6 +21,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
   const navigate = useNavigate();
   
+  // Set up auth redirects
+  useEffect(() => {
+    // Extract any access tokens from URL on initial load (for email confirmations)
+    const handleRedirectWithAccessToken = () => {
+      // Check if we have an access token in the URL (after email confirmation)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      
+      if (accessToken) {
+        // Clear the URL hash to remove the token
+        window.history.replaceState(null, '', window.location.pathname);
+        
+        toast({
+          title: "Email confirmed",
+          description: "Your email has been confirmed successfully.",
+        });
+        
+        // Navigate to dashboard after successful confirmation
+        navigate('/dashboard');
+      }
+    };
+
+    handleRedirectWithAccessToken();
+  }, [navigate, toast]);
+  
   // Sign in with email and password
   const login = async (email: string, password: string) => {
     try {
@@ -61,6 +86,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          // Set the redirect URL for email confirmations
+          emailRedirectTo: window.location.origin
+        }
       });
       
       if (error) {
@@ -71,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       toast({
         title: "Sign up successful",
-        description: "Welcome to Magic Tools!",
+        description: "Welcome to Magic Tools! Please check your email to confirm your account.",
       });
       
       navigate('/dashboard');

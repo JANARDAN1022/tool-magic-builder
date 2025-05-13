@@ -1,6 +1,7 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { generateToolSchema } from '@/services/ai-service';
 
 export type FieldType = 'text' | 'number' | 'date' | 'select' | 'boolean' | 'email' | 'url' | 'textarea';
 
@@ -205,56 +206,22 @@ export function ToolsProvider({ children }: { children: React.ReactNode }) {
     return deployedTool;
   };
 
-  // This function simulates AI processing of a tool description
-  // In a real implementation, this would call the AI service
+  // Generate a tool from description using the AI service
   const generateToolFromDescription = async (description: string): Promise<Tool> => {
     setIsLoading(true);
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Call the AI service to generate a tool schema
+      const aiResponse = await generateToolSchema(description);
       
-      // Mock AI response - this would come from the AI service
-      const mockAiResponse = {
-        name: description.split(' ').slice(0, 3).join(' ') + ' Tool',
-        description: description,
-        fields: [
-          {
-            id: generateId(),
-            name: 'Name',
-            type: 'text' as FieldType,
-            required: true,
-            description: 'Name of the item'
-          },
-          {
-            id: generateId(),
-            name: 'Status',
-            type: 'select' as FieldType,
-            required: true,
-            options: ['Pending', 'In Progress', 'Completed'],
-            description: 'Current status'
-          },
-          {
-            id: generateId(),
-            name: 'Date',
-            type: 'date' as FieldType,
-            required: true,
-            description: 'Date of the event'
-          },
-          {
-            id: generateId(),
-            name: 'Notes',
-            type: 'textarea' as FieldType,
-            required: false,
-            description: 'Additional notes'
-          }
-        ]
-      };
+      // Create the new tool using the AI response
+      const newTool = await createTool({
+        name: aiResponse.name,
+        description: aiResponse.description,
+        fields: aiResponse.fields
+      });
       
-      // Create the new tool
-      const newTool = await createTool(mockAiResponse);
       return newTool;
-      
     } catch (error) {
       console.error('Error generating tool:', error);
       toast({
