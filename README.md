@@ -60,8 +60,6 @@ Before setting up the project, ensure you have the following installed:
    yarn dev
    ```
 
-   The application will be available at `http://localhost:3000`.
-
 5. **Build for Production**:
    To create a production build, run:
 
@@ -100,3 +98,8 @@ Contributions are welcome! Please follow these steps:
 2. Create a new branch for your feature or bugfix.
 3. Commit your changes with clear messages.
 4. Push your branch and create a pull request.
+
+## Production URL
+
+Live URL:-
+https://toolsmagic.netlify.app/
