@@ -33,7 +33,7 @@ export function ToolHeader({
   const navigate = useNavigate();
   
   const handleToolFormChange = (field: string, value: any) => {
-    setToolFormData(prev => ({ ...prev, [field]: value }));
+    setToolFormData({ ...toolFormData, [field]: value });
   };
   
   return (

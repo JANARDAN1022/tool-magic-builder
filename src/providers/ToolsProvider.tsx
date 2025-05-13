@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { generateToolSchema } from '@/services/ai-service';
@@ -214,11 +213,17 @@ export function ToolsProvider({ children }: { children: React.ReactNode }) {
       // Call the AI service to generate a tool schema
       const aiResponse = await generateToolSchema(description);
       
-      // Create the new tool using the AI response
+      // Make sure the generated fields have valid FieldType values
+      const validatedFields: ToolField[] = aiResponse.fields.map(field => ({
+        ...field,
+        type: validateFieldType(field.type)
+      }));
+      
+      // Create the new tool using the AI response with validated fields
       const newTool = await createTool({
         name: aiResponse.name,
         description: aiResponse.description,
-        fields: aiResponse.fields
+        fields: validatedFields
       });
       
       return newTool;
@@ -233,6 +238,19 @@ export function ToolsProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Helper function to validate field types
+  const validateFieldType = (type: string): FieldType => {
+    const validTypes: FieldType[] = ['text', 'number', 'date', 'select', 'boolean', 'email', 'url', 'textarea'];
+    
+    if (validTypes.includes(type as FieldType)) {
+      return type as FieldType;
+    }
+    
+    // Default to 'text' if the type is not valid
+    console.warn(`Invalid field type "${type}" detected, defaulting to "text"`);
+    return 'text';
   };
 
   const createRecord = async (toolId: string, data: Record<string, any>): Promise<ToolRecord> => {
