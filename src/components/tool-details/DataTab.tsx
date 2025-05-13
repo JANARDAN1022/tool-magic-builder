@@ -156,7 +156,7 @@ export function DataTab({
               Add Record
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New Record</DialogTitle>
               <DialogDescription>
@@ -206,7 +206,7 @@ export function DataTab({
             }
           }}
         >
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Edit Record</DialogTitle>
               <DialogDescription>
@@ -249,7 +249,7 @@ export function DataTab({
       </div>
       
       {records.length > 0 ? (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

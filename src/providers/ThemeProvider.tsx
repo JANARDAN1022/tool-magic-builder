@@ -27,28 +27,47 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
+  const [isThemeChanging, setIsThemeChanging] = useState(false);
 
   useEffect(() => {
     const root = window.document.documentElement;
+    
+    // Remove previous theme classes
     root.classList.remove("light", "dark");
-
+    
+    // Apply new theme with optimizations to avoid repaints
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
-      root.classList.add(systemTheme);
+      
+      // Use requestAnimationFrame for smooth theme switching
+      requestAnimationFrame(() => {
+        root.classList.add(systemTheme);
+      });
       return;
     }
-
-    root.classList.add(theme);
+    
+    // Use requestAnimationFrame for smooth theme switching
+    requestAnimationFrame(() => {
+      root.classList.add(theme);
+    });
   }, [theme]);
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      // Throttle theme changes to prevent rapid toggling
+      if (isThemeChanging) return;
+      
+      setIsThemeChanging(true);
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
+      
+      // Reset throttle after a short delay
+      setTimeout(() => {
+        setIsThemeChanging(false);
+      }, 300);
     },
   };
 
