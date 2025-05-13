@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -95,22 +94,6 @@ export default function Login() {
                   </Link>
                 </div>
               </form>
-
-              <div className="mt-8 pt-6 border-t text-center">
-                <p className="text-sm text-muted-foreground mb-4">
-                  This is a demo application. Use any email and password to log in.
-                </p>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => {
-                    setEmail("demo@example.com");
-                    setPassword("password");
-                  }}
-                >
-                  Fill with demo credentials
-                </Button>
-              </div>
             </div>
           </div>
         </div>

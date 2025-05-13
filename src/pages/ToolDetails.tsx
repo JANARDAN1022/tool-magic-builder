@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -6,8 +5,6 @@ import { RouteGuard } from "@/components/RouteGuard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTools, Tool, ToolRecord } from "@/providers/ToolsProvider";
 import { useToast } from "@/hooks/use-toast";
-
-// Import the components we created
 import { ToolHeader } from "@/components/tool-details/ToolHeader";
 import { ToolEditForm } from "@/components/tool-details/ToolEditForm";
 import { DataTab } from "@/components/tool-details/DataTab";
@@ -17,10 +14,19 @@ import { SettingsTab } from "@/components/tool-details/SettingsTab";
 export default function ToolDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tools, toolRecords, isLoading, updateTool, deleteTool, deployTool, createRecord, updateRecord, deleteRecord } = useTools();
+  const {
+    tools,
+    toolRecords,
+    isLoading,
+    updateTool,
+    deleteTool,
+    deployTool,
+    createRecord,
+    updateRecord,
+    deleteRecord,
+  } = useTools();
   const { toast } = useToast();
-  
-  // States
+
   const [tool, setTool] = useState<Tool | null>(null);
   const [records, setRecords] = useState<ToolRecord[]>([]);
   const [editingRecord, setEditingRecord] = useState<ToolRecord | null>(null);
@@ -30,12 +36,11 @@ export default function ToolDetails() {
   const [toolFormData, setToolFormData] = useState<Partial<Tool>>({});
   const [activeTab, setActiveTab] = useState("data");
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  // Effects
+
   useEffect(() => {
     if (!id) return;
-    
-    const foundTool = tools.find(t => t.id === id);
+
+    const foundTool = tools.find((t) => t.id === id);
     if (foundTool) {
       setTool(foundTool);
       setToolFormData(foundTool);
@@ -47,19 +52,21 @@ export default function ToolDetails() {
       });
       navigate("/dashboard");
     }
-    
-    const toolRecordsList = toolRecords.filter(record => record.toolId === id);
+
+    const toolRecordsList = toolRecords.filter(
+      (record) => record.toolId === id
+    );
     setRecords(toolRecordsList);
   }, [id, tools, toolRecords, navigate, toast]);
-  
+
   // Handlers for tool operations
   const handleToolFormChange = (field: string, value: any) => {
-    setToolFormData(prev => ({ ...prev, [field]: value }));
+    setToolFormData((prev) => ({ ...prev, [field]: value }));
   };
-  
+
   const handleSaveTool = async () => {
     if (!id || !tool) return;
-    
+
     try {
       setIsProcessing(true);
       await updateTool(id, toolFormData);
@@ -75,10 +82,10 @@ export default function ToolDetails() {
       setIsProcessing(false);
     }
   };
-  
+
   const handleDeployTool = async () => {
     if (!id || !tool) return;
-    
+
     try {
       setIsProcessing(true);
       await deployTool(id);
@@ -97,10 +104,10 @@ export default function ToolDetails() {
       setIsProcessing(false);
     }
   };
-  
+
   const handleDeleteTool = async () => {
     if (!id || !tool) return;
-    
+
     try {
       setIsProcessing(true);
       await deleteTool(id);
@@ -116,16 +123,16 @@ export default function ToolDetails() {
       setIsProcessing(false);
     }
   };
-  
+
   // Handlers for record operations
   const handleCreateRecord = async () => {
     if (!id || !tool) return;
-    
+
     // Validate required fields
     const missingFields = tool.fields
-      .filter(field => field.required && !recordFormData[field.name])
-      .map(field => field.name);
-    
+      .filter((field) => field.required && !recordFormData[field.name])
+      .map((field) => field.name);
+
     if (missingFields.length > 0) {
       toast({
         title: "Missing required fields",
@@ -134,11 +141,19 @@ export default function ToolDetails() {
       });
       return;
     }
-    
+
     try {
       setIsProcessing(true);
       const newRecord = await createRecord(id, recordFormData);
-      setRecords(prev => [...prev, newRecord]);
+
+      setRecords((prev) => {
+        if (prev.some((record) => record.id === newRecord.id)) {
+          console.warn("Duplicate record ID detected, skipping addition.");
+          return prev;
+        }
+        return [...prev, newRecord];
+      });
+
       setRecordFormData({});
       setIsCreatingRecord(false);
     } catch (error) {
@@ -152,14 +167,21 @@ export default function ToolDetails() {
       setIsProcessing(false);
     }
   };
-  
+
   const handleUpdateRecord = async () => {
     if (!editingRecord) return;
-    
+
     try {
       setIsProcessing(true);
-      const updatedRecord = await updateRecord(editingRecord.id, recordFormData);
-      setRecords(prev => prev.map(record => record.id === updatedRecord.id ? updatedRecord : record));
+      const updatedRecord = await updateRecord(
+        editingRecord.id,
+        recordFormData
+      );
+      setRecords((prev) =>
+        prev.map((record) =>
+          record.id === updatedRecord.id ? updatedRecord : record
+        )
+      );
       setEditingRecord(null);
       setRecordFormData({});
     } catch (error) {
@@ -173,12 +195,12 @@ export default function ToolDetails() {
       setIsProcessing(false);
     }
   };
-  
+
   const handleDeleteRecord = async (recordId: string) => {
     try {
       setIsProcessing(true);
       await deleteRecord(recordId);
-      setRecords(prev => prev.filter(record => record.id !== recordId));
+      setRecords((prev) => prev.filter((record) => record.id !== recordId));
     } catch (error) {
       console.error("Error deleting record:", error);
       toast({
@@ -190,17 +212,20 @@ export default function ToolDetails() {
       setIsProcessing(false);
     }
   };
-  
+
   const startEditingRecord = (record: ToolRecord) => {
     setEditingRecord(record);
     setRecordFormData(record.data);
   };
-  
+
   // Loading state
   if (isLoading || !tool) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+        <div className="relative w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-4 border-secondary border-b-transparent animate-spin-slow"></div>
+        </div>
       </div>
     );
   }
@@ -209,9 +234,9 @@ export default function ToolDetails() {
     <RouteGuard>
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        
+
         <main className="flex-1 container max-w-7xl mx-auto px-4 py-24">
-          <ToolHeader 
+          <ToolHeader
             tool={tool}
             isEditingTool={isEditingTool}
             setIsEditingTool={setIsEditingTool}
@@ -221,24 +246,28 @@ export default function ToolDetails() {
             handleDeployTool={handleDeployTool}
             isProcessing={isProcessing}
           />
-          
+
           {isEditingTool ? (
-            <ToolEditForm 
+            <ToolEditForm
               toolFormData={toolFormData}
               handleToolFormChange={handleToolFormChange}
               handleDeleteTool={handleDeleteTool}
               isProcessing={isProcessing}
             />
           ) : (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="mb-8"
+            >
               <TabsList>
                 <TabsTrigger value="data">Data</TabsTrigger>
                 <TabsTrigger value="visualization">Visualization</TabsTrigger>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="data" className="pt-6">
-                <DataTab 
+                <DataTab
                   tool={tool}
                   records={records}
                   handleCreateRecord={handleCreateRecord}
@@ -254,17 +283,17 @@ export default function ToolDetails() {
                   isProcessing={isProcessing}
                 />
               </TabsContent>
-              
+
               <TabsContent value="visualization" className="pt-6">
-                <VisualizationTab 
+                <VisualizationTab
                   records={records}
                   setActiveTab={setActiveTab}
                   setIsCreatingRecord={setIsCreatingRecord}
                 />
               </TabsContent>
-              
+
               <TabsContent value="settings" className="pt-6">
-                <SettingsTab 
+                <SettingsTab
                   tool={tool}
                   handleDeleteTool={handleDeleteTool}
                   isProcessing={isProcessing}
